@@ -2,13 +2,15 @@ package com.xms.house.autoconfig;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.zalando.logbook.httpclient.LogbookHttpRequestInterceptor;
+import org.zalando.logbook.httpclient.LogbookHttpResponseInterceptor;
 
 @Configuration
 @ConditionalOnClass({HttpClient.class})
@@ -16,6 +18,12 @@ import org.springframework.context.annotation.Configuration;
 public class HttpClientAutoConfiguration {
 
 	private final HttpClientProperties properties;
+	
+	@Autowired
+	private LogbookHttpRequestInterceptor logbookHttpRequestInterceptor;
+	
+	@Autowired
+	private LogbookHttpResponseInterceptor logbookHttpResponseInterceptor;
 	
 	public HttpClientAutoConfiguration(HttpClientProperties properties){
 		this.properties = properties;
@@ -37,6 +45,8 @@ public class HttpClientAutoConfiguration {
 				.setUserAgent(properties.getAgent())
 				.setMaxConnPerRoute(properties.getMaxConnPerRoute())//每一个服务节点最大的连接数
 				.setMaxConnTotal(properties.getMaxConnTotaol())//服务节点最大总连接数
+				.addInterceptorFirst(logbookHttpRequestInterceptor)
+				.addInterceptorFirst(logbookHttpResponseInterceptor)
 				//.setConnectionReuseStrategy(new NoConnectionReuseStrategy())//设置连接重用的策略
 				.build();
 		return client;

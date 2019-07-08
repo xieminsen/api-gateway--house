@@ -3,6 +3,12 @@ package com.xms.house.common;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+/**
+ * 返回类型
+ * @author xie
+ *
+ * @param <T>
+ */
 @JsonInclude(Include.NON_NULL)
 public class RestResponse<T> {
   
