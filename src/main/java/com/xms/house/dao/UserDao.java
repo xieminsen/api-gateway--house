@@ -13,9 +13,9 @@ public class UserDao {
 	private GenericRest rest;
 	
 	public String getusername(Long id) {
-		String url = "direct://http://127.0.0.1:8083/getusername?id="+id;//使用直连bean
-/*		String url = "http://user/getusername?id="+id;//使用load负载均衡bean
-*/		return rest.get(url, new ParameterizedTypeReference<String>(){}).getBody();
+		//String url = "direct://http://127.0.0.1:8083/getusername?id="+id;//使用直连bean
+		String url = "http://user/getusername?id="+id;//使用load负载均衡bean
+		return rest.get(url, new ParameterizedTypeReference<String>(){}).getBody();
 		
 	}
 	
