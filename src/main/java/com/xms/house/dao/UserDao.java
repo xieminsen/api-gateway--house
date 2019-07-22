@@ -8,6 +8,8 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.xms.house.autoconfig.GenericRest;
 import com.xms.house.common.RestResponse;
 import com.xms.house.model.Agency;
@@ -16,6 +18,8 @@ import com.xms.house.model.User;
 import com.xms.house.utils.Rests;
 
 @Repository
+//断路器配置 userDao的最低连接池
+@DefaultProperties(groupKey="userDao",threadPoolKey="userDao")
 public class UserDao {
 
 	@Autowired
@@ -36,7 +40,7 @@ public class UserDao {
 	 * @param query
 	 * @return
 	 */
-//	//@HystrixCommand
+	  @HystrixCommand
 	  public List<User> getUserList(User query) {
 	    ResponseEntity<RestResponse<List<User>>> resultEntity = rest.post("http://"+ userServiceName + "/user/getList",query, new ParameterizedTypeReference<RestResponse<List<User>>>() {});
 	    RestResponse<List<User>> restResponse  = resultEntity.getBody();
@@ -52,7 +56,7 @@ public class UserDao {
 	   * @param account
 	   * @return
 	   */
-	  //@HystrixCommand
+	  @HystrixCommand
 	  public User addUser(User account) {
 	    String url = "http://" + userServiceName + "/user/add";
 	    ResponseEntity<RestResponse<User>> responseEntity = rest.post(url,account, new ParameterizedTypeReference<RestResponse<User>>() {});
@@ -65,7 +69,7 @@ public class UserDao {
 	    
 	  }
 
-	  //@HystrixCommand
+	  @HystrixCommand
 	  public User authUser(User user) {
 	    String url = "http://" + userServiceName + "/user/auth";
 	    ResponseEntity<RestResponse<User>> responseEntity =  rest.post(url, user, new ParameterizedTypeReference<RestResponse<User>>() {});
@@ -77,7 +81,7 @@ public class UserDao {
 	   }
 	  }
 
-	  //@HystrixCommand
+	  @HystrixCommand
 	  public void logout(String token) {
 	    String url = "http://" + userServiceName + "/user/logout?token=" + token;
 	    rest.get(url, new ParameterizedTypeReference<RestResponse<Object>>() {});
@@ -92,7 +96,7 @@ public class UserDao {
 	   * @param token
 	   * @return
 	   */
-	  //@HystrixCommand(fallbackMethod="getUserByTokenFb")
+	  @HystrixCommand(fallbackMethod="getUserByTokenFb")
 	  public User getUserByToken(String token) {
 	    String url = "http://" + userServiceName + "/user/get?token=" + token;
 	    ResponseEntity<RestResponse<User>> responseEntity = rest.get(url, new ParameterizedTypeReference<RestResponse<User>>() {});
@@ -103,7 +107,7 @@ public class UserDao {
 	    return response.getResult();
 	  }
 
-	  //@HystrixCommand
+	  @HystrixCommand
 	  public List<Agency> getAllAgency() {
 	    return Rests.exc(() ->{
 	      String url = Rests.toUrl(userServiceName, "/agency/list");
@@ -112,7 +116,9 @@ public class UserDao {
 	      return responseEntity.getBody();
 	    }).getResult();
 	  } 
-
+	  
+	  
+	  @HystrixCommand
 	  public User updateUser(User user) {
 	    return Rests.exc(() ->{
 	      String url = Rests.toUrl(userServiceName, "/user/update");
@@ -122,7 +128,7 @@ public class UserDao {
 	    }).getResult();
 	  }
 
-	  //@HystrixCommand
+	  @HystrixCommand
 	  public User getAgentById(Long id) {
 	   return Rests.exc(() ->{
 	      String url = Rests.toUrl(userServiceName, "/agency/agentDetail?id=" +id);
@@ -136,6 +142,7 @@ public class UserDao {
 	   * 用户激活
 	   * @param key
 	   */
+	  @HystrixCommand
 	  public boolean enable(String key) {
 	    Rests.exc(() ->{
 	        String url = Rests.toUrl(userServiceName, "/user/enable?key=" + key);
@@ -146,7 +153,9 @@ public class UserDao {
 	    );
 	    return true;
 	  }
-
+	  
+	  
+	  @HystrixCommand
 	  public Agency getAgencyById(Integer id) {
 	    return Rests.exc(() -> {
 	      String url = Rests.toUrl(userServiceName, "/agency/agencyDetail?id=" + id);
@@ -155,7 +164,9 @@ public class UserDao {
 	      return responseEntity.getBody();
 	    }).getResult();
 	  }
-
+	  
+	  
+	  @HystrixCommand
 	  public void addAgency(Agency agency) {
 	     Rests.exc(() -> {
 	      String url = Rests.toUrl(userServiceName, "/agency/add");
@@ -164,7 +175,9 @@ public class UserDao {
 	      return responseEntity.getBody();
 	    });
 	  }
-
+	  
+	  
+	  @HystrixCommand
 	  public ListResponse<User> getAgentList(Integer limit, Integer offset) {
 	    return Rests.exc(() -> {
 	      String url = Rests.toUrl(userServiceName, "/agency/agentList?limit=" + limit + "&offset="+offset);
@@ -173,7 +186,9 @@ public class UserDao {
 	      return responseEntity.getBody();
 	    }).getResult();
 	  }
-
+	  
+	  
+	  @HystrixCommand
 	  public String getEmail(String key) {
 	    return Rests.exc(() -> {
 	      String url = Rests.toUrl(userServiceName, "/user/getKeyEmail?key=" + key);
@@ -182,7 +197,9 @@ public class UserDao {
 	      return responseEntity.getBody();
 	    }).getResult();
 	  }
-
+	  
+	  
+	  @HystrixCommand
 	  public User reset(String key, String password) {
 	    return Rests.exc(() -> {
 	      String url = Rests.toUrl(userServiceName, "/user/reset?key=" + key + "&password="+password);
@@ -191,7 +208,9 @@ public class UserDao {
 	      return responseEntity.getBody();
 	    }).getResult();
 	  }
-
+	  
+	  
+	  @HystrixCommand
 	  public void resetNotify(String email, String url) {
 	     Rests.exc(() -> {
 	          String sendUrl = Rests.toUrl(userServiceName, "/user/resetNotify?email=" + email + "&url="+url);

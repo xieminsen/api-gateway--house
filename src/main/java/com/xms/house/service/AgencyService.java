@@ -39,6 +39,15 @@ public class AgencyService {
     return PageData.<User>buildPage(result.getList(), count, pageParams.getPageSize(), pageParams.getPageNum());
   }
 
+  /**
+   * 获取经纪人详情
+   * @param id
+   * @return
+   */
+  public User getAgentDetail(Long id) {
+	    return userDao.getAgentById(id);
+	  }
+
   
   
   

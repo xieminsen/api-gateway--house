@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
@@ -18,6 +19,7 @@ import com.xms.house.autoconfig.NewRuleConfig;
 @SpringBootApplication
 @EnableDiscoveryClient
 @Controller
+@EnableCircuitBreaker//启用断路器
 //@RibbonClient(name="user",configuration=NewRuleConfig.class)//使用ribbo自动注解 指定为user的微服务 策略为NewRuleConfig的文件
 public class ApiGatewayApplication {
 

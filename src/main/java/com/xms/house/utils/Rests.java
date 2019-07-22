@@ -5,18 +5,22 @@ import java.util.concurrent.Callable;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ *    简化rest调用
+ * @author xie
+ *
+ */
 public final class Rests {
   
   private static final Logger LOGGER = LoggerFactory.getLogger(Rests.class);
   
   private Rests(){};
-  
+  //内部类实现
   private static DefaultHanlder defaultHanlder = new DefaultHanlder();
   
   
   /**
-   * 执行服务调用，并判断返回状态
+   *  执行服务调用，并判断返回状态
    * @param callable
    * @return
    */
@@ -29,10 +33,21 @@ public final class Rests {
     return handler.handle(result);
   }
   
+  /**
+   *  转化url路径
+   * @param serviceName
+   * @param path
+   * @return
+   */
   public static String toUrl(String serviceName,String path){
     return "http://" + serviceName + path;
   }
   
+  /**
+   * 内部类
+   * @author xie
+   *
+   */
   public static class DefaultHanlder implements ResultHandler {
 
     @Override
@@ -57,6 +72,11 @@ public final class Rests {
     <T> T handle(T result);
   }
 
+  /**
+   *  发起请求
+   * @param callable
+   * @return
+   */
   public static <T> T sendReq(Callable<T> callable){
     T result = null;
     try {

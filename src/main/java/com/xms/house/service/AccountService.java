@@ -155,7 +155,7 @@ public class AccountService {
     user.setEmail(username);
     user.setPasswd(password);
     try {
-      user = userDao.addUser(user);
+      user = userDao.authUser(user);
     } catch (Exception e) {
       return null;
     }
